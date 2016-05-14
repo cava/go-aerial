@@ -1,10 +1,9 @@
-package main
+package aerial
 
 import "net/http"
 import "fmt"
 import "io/ioutil"
 import "encoding/json"
-import "os/exec"
 import "math/rand"
 
 const catalogUrl = "http://a1.phobos.apple.com/us/r1000/000/Features/atv/AutumnResources/videos/entries.json"
@@ -21,7 +20,7 @@ type AerialAsset struct {
 	TimeOfday string `json:"timeOfDay"`
 }
 
-func GetEntries() []AerialEntry {
+func GetAerialEntries() []AerialEntry {
 	res, err := http.Get(catalogUrl)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -37,16 +36,8 @@ func GetEntries() []AerialEntry {
 	return entries
 }
 
-func Random(entries []AerialEntry) AerialAsset {
+func RandomAsset(entries []AerialEntry) AerialAsset {
 	fmt.Println(rand.Intn(len(entries)))
 	assets := entries[rand.Intn(len(entries))].Assets
 	return assets[rand.Intn(len(assets))]
-}
-
-func main() {
-	entries := GetEntries()
-	randomAsset := Random(entries)
-	fmt.Println(randomAsset)
-	cmd := exec.Command("mpv", randomAsset.Url)
-	cmd.Start()
 }
